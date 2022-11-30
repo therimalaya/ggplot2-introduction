@@ -1,0 +1,1156 @@
+---
+title: "Grammer of graphics with `ggplot`"
+author: "Raju Rimal\nPostdoctoral Researcher"
+institute: University of Oslo
+date: "1 Dec, 2022"
+date-format: long
+title-slide-attributes:
+  data-background-image: Images/title-background.jpg
+  data-background-size: cover
+  data-background-opacity: "0.5"
+format: 
+  revealjs:
+    theme: default
+    css: custom.css
+    preview-links: true
+    show-slide-number: all
+    transition: slide
+    transition-speed: fast
+    background-transition: slide
+    chalkboard: true
+    fig-format: svg
+highlight-style: a11y
+code-tools: true
+execute: 
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction
+
+## Grammer of graphics
+
+```{r}
+#| echo: false
+autoload("%>%", "magrittr")
+library(ggplot2)
+library(data.table)
+data(cancer, package = "survival")
+```
+
+::: columns
+::: {.column width="40%"}
+![](Images/grammar-of-graphics-cover.webp){height="100%" style="max-height:500px;"}
+:::
+
+::: {.column width="60%"}
+![Image adapted from the [The Grammar of Graphics](https://link-springer-com.ezproxy.uio.no/book/10.1007/0-387-28695-0)](Images/gglayers.png)
+:::
+:::
+
+## Plotting system in R {#base-r-system auto-animate="true"}
+
+::: columns
+::: {.column width="25%"}
+::: r-fit-text
+Base
+:::
+:::
+
+::: {.column width="75%"}
+:::
+
+::: aside
+[Book](https://www-wiley-com.ezproxy.uio.no/en-us/The+R+Book%2C+3rd+Edition-p-9781119634461) \| [Tutorials](https://www.stat.auckland.ac.nz/~paul/RG2e/) \| Cheatsheets: [1](http://publish.illinois.edu/johnrgallagher/files/2015/10/BaseGraphicsCheatsheet.pdf), [2](http://www.gastonsanchez.com/visually-enforced/images/blog/par_cheatsheet.png)
+:::
+:::
+
+## Plotting system in R {#lattice-system auto-animate="true"}
+
+::: columns
+::: {.column width="25%"}
+::: r-fit-text
+Base
+
+Lattice
+:::
+:::
+
+::: {.column width="75%"}
+:::
+
+::: aside
+[Book](https://link.springer.com/book/10.1007/978-0-387-75969-2) \| [Video](https://www.youtube.com/watch?v=6VP5JBq1g7g) \| [Tutorial](https://quantoid.net/files/rbe/lattice.pdf)
+:::
+:::
+
+## Plotting system in R {#ggplot2-system auto-animate="true"}
+
+::: columns
+::: {.column width="20%"}
+::: r-fit-text
+Base
+
+Lattice
+
+`ggplot2`
+:::
+:::
+
+::: {.column width="80%"}
+:::
+
+::: aside
+[Website](https://ggplot2.tidyverse.org/) \| [Book](https://ggplot2-book.org/) \| Videos: [Part-1](https://www.youtube.com/watch?v=h29g21z0a68), [Part-2](https://www.youtube.com/watch?v=0m4yywqNPVY)
+
+[More:  `Github:erikgahner/awesome-ggplot2`](https://github.com/erikgahner/awesome-ggplot2)
+:::
+:::
+
+## Components of `ggplot2` {#ggplot2-components auto-animate="true"}
+
+::: columns
+::: column
+``` r
+ggplot(<DATA>, aes(<MAPPING>)) +
+  geom_*(<MAPPING>) +
+  scale_x_*(<SCALE_SPEC>) +
+  scale_y_*(<SCALE_SPEC>) +
+  facet_grid(ROW_FACET ~ COL_FACET) +
+  coord_<COORD_SYSTEM>(<SPEC>) +
+  theme(<THEME_ARGUMENTS>)
+```
+:::
+
+::: column
+![](Images/ggplot2-layers.png){width="100%"}
+:::
+:::
+
+## Components of `ggplot2` {#ggplot2-components-example auto-animate="true"}
+
+::: columns
+::: {.column .r-stack width="60%"}
+<!-- Step-1: blank -->
+
+<div>
+
+```{r}
+#| eval: false
+#| code-line-numbers: "1"
+ggplot(<DATA>, aes(<MAPPING>)) +
+  geom_*(<MAPPING>) +
+  stat_*(geom = <GEOM>, fun = <FUN>) +
+  facet_grid(ROW_FACET ~ COL_FACET) +
+  coord_<COORD_SYSTEM>(<SPEC>) +
+  theme(<THEME_ARGUMENTS>)
+```
+
+</div>
+
+<!-- Step-2: data -->
+
+::: {.fragment .current-visible fragment-index="2"}
+```{r}
+#| eval: false
+#| code-line-numbers: "1"
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_*(<MAPPING>) +
+  stat_*(geom = <GEOM>, fun = <FUN>) +
+  facet_grid(ROW_FACET ~ COL_FACET) +
+  coord_<COORD_SYSTEM>(<SPEC>) +
+  theme(<THEME_ARGUMENTS>)
+```
+:::
+
+<!-- Step-3: geom -->
+
+::: {.fragment .current-visible fragment-index="3"}
+```{r}
+#| eval: false
+#| code-line-numbers: 1-2
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_*(geom = <GEOM>, fun = <FUN>) +
+  facet_grid(ROW_FACET ~ COL_FACET) +
+  coord_<COORD_SYSTEM>(<SPEC>) +
+  theme(<THEME_ARGUMENTS>)
+```
+:::
+
+<!-- Step-4: stat -->
+
+::: {.fragment .current-visible fragment-index="4"}
+```{r}
+#| eval: false
+#| code-line-numbers: 1-3
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(ROW_FACET ~ COL_FACET) +
+  coord_<COORD_SYSTEM>(<SPEC>) +
+  theme(<THEME_ARGUMENTS>)
+```
+:::
+
+<!-- Step-5: facet -->
+
+::: {.fragment .current-visible fragment-index="5"}
+```{r}
+#| eval: false
+#| code-line-numbers: 1-4
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(status ~ .) +
+  coord_<COORD_SYSTEM>(<SPEC>) +
+  theme(<THEME_ARGUMENTS>)
+```
+:::
+
+<!-- Step-6: coord-cartesian -->
+
+::: {.fragment .current-visible fragment-index="6"}
+```{r}
+#| eval: false
+#| code-line-numbers: 1-5
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(status ~ .) +
+  coord_cartesian() +
+  theme(<THEME_ARGUMENTS>)
+```
+:::
+
+<!-- Step-7: coord-polar -->
+
+::: {.fragment .current-visible fragment-index="7"}
+```{r}
+#| eval: false
+#| code-line-numbers: 1-5
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(status ~ .) +
+  coord_polar() +
+  theme(<THEME_ARGUMENTS>)
+```
+:::
+
+<!-- Step-8: theme -->
+
+::: {.fragment .current-visible fragment-index="8"}
+```{r}
+#| eval: false
+#| code-line-numbers: 1-6
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(status ~ .) +
+  coord_cartesian() +
+  theme_bw()
+```
+:::
+:::
+
+::: {.column .r-stack width="40%"}
+<!-- Step-1: blank -->
+
+<div>
+
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 4
+#| fig-asp: 1
+ggplot()
+```
+
+</div>
+
+<!-- Step-2: data -->
+
+::: {.fragment .current-visible fragment-index="2"}
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 4
+#| fig-asp: 1
+ggplot(cancer, aes(x = time, y = wt.loss))
+```
+:::
+
+<!-- Step-3: geom -->
+
+::: {.fragment .current-visible fragment-index="3"}
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 4
+#| fig-asp: 1
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point()
+```
+:::
+
+<!-- Step-4: stat -->
+
+::: {.fragment .current-visible fragment-index="4"}
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 4
+#| fig-asp: 1
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red")
+```
+:::
+
+<!-- Step-5: facet -->
+
+::: {.fragment .current-visible fragment-index="5"}
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 4
+#| fig-asp: 1.5
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(status ~ .)
+```
+:::
+
+<!-- Step-6: coord-cartesian -->
+
+::: {.fragment .current-visible fragment-index="6"}
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 4
+#| fig-asp: 1.5
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(status ~ .) +
+  coord_cartesian()
+```
+:::
+
+<!-- Step-7: coord-polar -->
+
+::: {.fragment .current-visible fragment-index="7"}
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 4
+#| fig-asp: 1.5
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(status ~ .) +
+  coord_polar()
+```
+:::
+
+<!-- Step-8: theme -->
+
+::: {.fragment .current-visible fragment-index="8"}
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 4
+#| fig-asp: 1.5
+ggplot(cancer, aes(x = ph.karno, y = time)) +
+  geom_point() +
+  stat_summary(fun = mean, color = "red") +
+  facet_grid(status ~ .) +
+  coord_cartesian() +
+  theme_bw()
+```
+:::
+:::
+:::
+
+::: aside
+Dataset: [`cancer`](https://vincentarelbundock.github.io/Rdatasets/csv/survival/cancer.csv), Package: [`survival`](https://cran.r-project.org/web/packages/survival/index.html)
+:::
+
+# Customizing `ggplot2`
+
+## Aesthetic mappings {.smaller}
+
+::: columns
+::: {.column width="35%"}
+-   `x`, `xmin`, `xmax`
+
+::: {.fragment .slide-up fragment-index="1"}
+-   `y`, `ymin`, `ymax`
+:::
+
+::: {.fragment .slide-up fragment-index="2"}
+-   `label`
+:::
+
+::: {.fragment .slide-up fragment-index="3"}
+-   `group`
+-   `fill`, `color`
+:::
+
+::: {.fragment .slide-up fragment-index="4"}
+-   `size`, `alpha`
+-   `shape`, `linetype`
+:::
+:::
+
+::: {.column .smaller width="65%"}
+::: r-stack
+```{r}
+#| echo: false
+data(mtcars)
+mtcars <- tibble::rownames_to_column(mtcars, "model")
+mtcars <- mtcars %>% dplyr::mutate(am = dplyr::case_when(
+  am == 1 ~ "Manual", 
+  am == 0 ~ "Automatic",
+  TRUE ~ NA_character_
+))
+```
+
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+ggplot(mtcars, aes(factor(carb), mpg)) +
+  stat_summary(
+    fun.data = mean_se, 
+    geom = "pointrange", 
+    width = 0.1, 
+    color = "firebrick"
+  ) +
+  labs(
+    x = "Number of carborators",
+    y = "Mile per gallon"
+  ) + 
+  geom_point(
+    position = position_jitter(width = 0.05), 
+    shape = 21, 
+    fill = "whitesmoke"
+  ) +
+  coord_flip() +
+  annotate(
+    geom = "text",
+    y = c(23, 25.5, 27.5),
+    x = c(0.8, 0.8, 0.8),
+    label = c("xmin", "x", "xmax"),
+    family = "consolas",
+    color = "blue"
+  )
+```
+
+::: {.fragment .fade-in-then-out fragment-index="1"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+ggplot(mtcars, aes(factor(carb), mpg)) +
+  stat_summary(
+    fun.data = mean_se, 
+    geom = "pointrange", 
+    width = 0.1, 
+    color = "firebrick"
+  ) +
+  labs(
+    x = "Number of carborators",
+    y = "Mile per gallon"
+  ) + 
+  geom_point(
+    position = position_jitter(width = 0.05), 
+    shape = 21, 
+    fill = "whitesmoke"
+  ) +
+  annotate(
+  geom = "text",
+  y = c(23, 25.5, 27.5),
+  x = c(0.8, 0.8, 0.8),
+  label = c("ymin", "y", "ymax"),
+  family = "consolas",
+  color = "blue"
+)
+```
+:::
+
+::: {.fragment .fade-in-then-out fragment-index="2"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+ggplot(mtcars, aes(factor(carb), mpg)) +
+  stat_summary(
+    fun.data = mean_se, 
+    geom = "pointrange", 
+    width = 0.1, 
+    color = "firebrick"
+  ) +
+  labs(
+    x = "Number of carborators",
+    y = "Mile per gallon"
+  ) + 
+  geom_point(
+    position = position_jitter(width = 0.05), 
+    shape = 21, 
+    fill = "whitesmoke"
+  ) +
+  geom_text(
+    data = ~subset(.x, carb >= 6),
+    aes(label = model),
+    check_overlap = TRUE,
+    vjust = -1
+  )
+```
+:::
+
+::: {.fragment .fade-in-then-out fragment-index="3"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+ggplot(mtcars, aes(factor(carb), mpg, group = am, color = factor(am))) +
+  geom_point(
+    position = position_jitter(width = 0.05), 
+    fill = "whitesmoke"
+  ) +
+  stat_summary(
+    fun = mean,
+    geom = "line"
+  ) +
+  stat_summary(
+    fun.data = mean_se, 
+    geom = "pointrange", 
+    width = 0.1,
+    fill = "whitesmoke"
+  ) +
+  labs(
+    x = "Number of carborators",
+    y = "Mile per gallon",
+    color = "Engine",
+    fill = "Engine",
+  ) +
+  theme(
+    legend.position = c(1, 1),
+    legend.justification = c(1, 1) + 0.25
+  )
+  
+```
+:::
+
+::: {.fragment .fade-in-then-out fragment-index="4"}
+```{r aes-shape-lty}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+ggplot(mtcars, aes(factor(carb), mpg, group = am)) +
+  geom_point(
+    position = position_jitter(width = 0.05), 
+    fill = "whitesmoke",
+    aes(shape = factor(am))
+  ) +
+  stat_summary(
+    fun = mean,
+    geom = "line",
+    aes(linetype = factor(am))
+  ) +
+  stat_summary(
+    fun.data = mean_se, 
+    geom = "pointrange", 
+    width = 0.1,
+    fill = "whitesmoke",
+    aes(shape = factor(am), linetype = factor(am))
+  ) +
+  labs(
+    x = "Number of carborators",
+    y = "Mile per gallon",
+    color = "Engine",
+    linetype = "Engine",
+    fill = "Engine",
+    shape = "Engine"
+  ) +
+  scale_shape_discrete(solid = FALSE) +
+  theme(
+    legend.position = c(1, 1),
+    legend.justification = c(1, 1) + 0.25
+  )
+  
+```
+:::
+:::
+:::
+:::
+
+::: aside
+Dataset: [`mtcars`](https://vincentarelbundock.github.io/Rdatasets/csv/datasets/mtcars.csv), Package: [`datasets`](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html)
+:::
+
+## Summary statistics
+
+::: columns
+::: {.column width="35%"}
+-   `mean`, `median`
+-   standard error ([`mean_se`](https://ggplot2.tidyverse.org/reference/mean_se.html))
+-   standard deviation ([`mean_sdl`](https://ggplot2.tidyverse.org/reference/hmisc.html))
+
+::: {.fragment .slide-up fragment-index="1"}
+-   fitted model ([`geom_smooth`](https://ggplot2.tidyverse.org/reference/geom_smooth.html))
+:::
+:::
+
+::: {.column .r-stack .smaller width="65%"}
+```{r aes-shape-lty}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+```
+
+::: {.fragment .fade-in fragment-index="1"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+ggplot(mtcars, aes(factor(carb), mpg)) +
+  geom_point(
+    position = position_jitter(width = 0.05), 
+    aes(shape = am),
+    fill = "whitesmoke",
+    size = rel(3)
+  ) +
+  geom_smooth(
+    method = "lm",
+    formula = "y ~ x",
+    se = FALSE,
+    aes(linetype = am, group = am)
+  ) +
+  labs(
+    x = "Number of carborators",
+    y = "Mile per gallon",
+    color = "Engine",
+    linetype = "Engine",
+    fill = "Engine",
+    shape = "Engine"
+  ) +
+  scale_shape_discrete(solid = FALSE) +
+  theme(
+    legend.position = c(1, 1),
+    legend.justification = c(1, 1) + 0.25
+  )
+```
+:::
+:::
+:::
+
+::: aside
+Dataset: [`mtcars`](https://vincentarelbundock.github.io/Rdatasets/csv/datasets/mtcars.csv), Package: [`datasets`](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html)
+:::
+
+## Faceting {auto-animate="true"}
+
+::: columns
+::: {.column width="35%"}
+> [`facet_grid`](https://ggplot2.tidyverse.org/reference/facet_grid.html)
+
+::: {.fragment .slide-up fragment-index="1"}
+> [`facet_wrap`](https://ggplot2.tidyverse.org/reference/facet_wrap.html)
+:::
+
+::: {.fragment .slide-up fragment-index="2"}
+> [`labeller`](https://ggplot2.tidyverse.org/reference/labeller.html)
+:::
+:::
+
+::: {.column .r-stack width="65%"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+ggplot(survival::cancer, aes(time)) +
+  geom_histogram(
+    aes(y = after_stat(density)), 
+    fill = "#afafaf",
+    binwidth = 365.241/4, 
+    color = "#a0a0a0", 
+    na.rm = TRUE
+  ) +
+  geom_density(na.rm = TRUE) +
+  facet_grid(
+    cols = vars(sex), 
+    rows = vars(status)
+  ) +
+  labs(title = "Example of facet grid")
+```
+
+::: {.fragment .slide-up fragment-index="1"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+cancer <- as.data.table(survival::cancer)
+cancer[, age_group := cut(age, seq(35, 85, 10))]
+ggplot(cancer, aes(time)) +
+  geom_histogram(
+    aes(y = after_stat(density)), 
+    fill = "#afafaf",
+    binwidth = 365.241/4, 
+    color = "#a0a0a0", 
+    na.rm = TRUE
+  ) +
+  geom_density(na.rm = TRUE) +
+  facet_wrap(
+    facets = vars(age_group),
+  ) +
+  labs(title = "Example of facet wrap")
+```
+:::
+
+::: {.fragment .slide-up fragment-index="2"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+cancer <- as.data.table(survival::cancer)
+cancer[, age_group := cut(age, seq(35, 85, 10))]
+ggplot(cancer, aes(time)) +
+  geom_histogram(
+    aes(y = after_stat(density)), 
+    fill = "#afafaf",
+    binwidth = 365.241/4, 
+    color = "#a0a0a0", 
+    na.rm = TRUE
+  ) +
+  geom_density(na.rm = TRUE) +
+  facet_wrap(
+    facets = vars(age_group),
+    labeller = labeller(
+      age_group = function(x) {
+        gsub("\\((.*?),(.*?)\\]", "Age Group: \\1-\\2", x)
+      }
+    )
+  ) +
+  labs(title = "Example of facet wrap")
+```
+:::
+:::
+:::
+
+::: aside
+Dataset: [`cancer`](https://vincentarelbundock.github.io/Rdatasets/csv/survival/cancer.csv), Package: [`survival`](https://cran.r-project.org/web/packages/survival/index.html)
+:::
+
+## Scale {.smaller auto-animate="true" transition="none"}
+
+::: columns
+::: {.column width="35%"}
+Function to specify (customize) scales. Usually takes the form `scale_<GEOM>_<TYPE>`.
+
+::: {.fragment .slide-up fragment-index="1"}
+-   [`scale_x_contineous`]()
+-   [`scale_x_discrete`]()
+:::
+
+::: {.fragment .slide-up fragment-index="2"}
+-   [`scale_y_contineous`]()
+-   [`scale_y_discrete`]()
+:::
+:::
+
+::: {.column .r-stack width="65%"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+cancer <- as.data.table(survival::cancer)
+cancer[, age_group := cut(age, seq(35, 85, 10))]
+ggplot(cancer, aes(time)) +
+  geom_histogram(
+    aes(y = after_stat(density)), 
+    fill = "#afafaf",
+    binwidth = 365.241/4, 
+    color = "#a0a0a0", 
+    na.rm = TRUE
+  ) +
+  geom_density(na.rm = TRUE) +
+  facet_wrap(
+    facets = vars(age_group),
+    labeller = labeller(
+      age_group = function(x) {
+        gsub("\\((.*?),(.*?)\\]", "Age Group: \\1-\\2", x)
+      }
+    )
+  ) +
+  labs(title = "Example of facet wrap")
+```
+
+::: {.fragment .current-visible fragment-index="1"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+#| code-line-numbers: 14-17
+ggplot(cancer, aes(time)) +
+  geom_histogram(
+    aes(y = after_stat(density)), 
+    fill = "#afafaf",
+    binwidth = 365.241/4, 
+    color = "#a0a0a0", 
+    na.rm = TRUE
+  ) +
+  geom_density(na.rm = TRUE) +
+  facet_wrap(
+    facets = vars(age_group),
+    labeller = labeller(
+      age_group = function(x) {
+        gsub("\\((.*?),(.*?)\\]", "Age Group: \\1-\\2", x)
+      }
+    )
+  ) +
+  labs(title = "Example of facet wrap") +
+  scale_x_continuous(
+    breaks = seq(0, 3, 0.5) * 365.241,
+    labels = function(x) x / 365.241
+  )
+```
+:::
+
+::: {.fragment .current-visible fragment-index="2"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+#| code-line-numbers: 18-21
+ggplot(cancer, aes(time)) +
+  geom_histogram(
+    aes(y = after_stat(density)), 
+    fill = "#afafaf",
+    binwidth = 365.241/4, 
+    color = "#a0a0a0", 
+    na.rm = TRUE
+  ) +
+  geom_density(na.rm = TRUE) +
+  facet_wrap(
+    facets = vars(age_group),
+    labeller = labeller(
+      age_group = function(x) {
+        gsub("\\((.*?),(.*?)\\]", "Age Group: \\1-\\2", x)
+      }
+    )
+  ) +
+  labs(title = "Example of facet wrap") +
+  scale_x_continuous(
+    breaks = seq(0, 3, 0.5) * 365.241,
+    labels = function(x) x / 365.241
+  ) +
+  scale_y_continuous(
+    labels = scales::label_scientific()
+  )
+```
+:::
+:::
+:::
+
+::: aside
+Dataset: [`cancer`](https://vincentarelbundock.github.io/Rdatasets/csv/survival/cancer.csv), Package: [`survival`](https://cran.r-project.org/web/packages/survival/index.html)
+:::
+
+## Scale {.smaller auto-animate="true"}
+
+::: columns
+::: {.column width="35%"}
+-   [**`scale_color_*`**]()
+-   [`scale_fill_*`]()
+-   [`scale_shape_*`]()
+-   [`scale_linetype_*`]()
+-   [`scale_alpha_*`]()
+-   [**`scale_size_*`**]()
+:::
+
+::: {.column width="65%"}
+```{r}
+#| echo: true
+#| fig-width: 6
+#| fig-asp: 0.8
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+mtcars$gear <- as.factor(mtcars$gear)
+ggplot(mtcars, aes(hp, mpg, color = gear)) +
+  geom_point(aes(size = wt), alpha = 0.8) +
+  scale_size_continuous(breaks = seq(1, 6, 2), limits = c(1, 6)) +
+  theme(
+    legend.position = c(1, 1),
+    legend.justification = c(1.5, 1.5),
+    legend.direction = "horizontal"
+  ) +
+  labs(
+    x = "Horse power", 
+    y = "Mile per gallon",
+    color = "Gear",
+    size = "Weight"
+  )
+```
+:::
+
+::: aside
+See more at: [Scales and Guides](https://ggplot2-book.org/scales-guides.html)
+
+Dataset: [`mtcars`](https://vincentarelbundock.github.io/Rdatasets/csv/datasets/mtcars.csv), Package: [`datasets`](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html)
+:::
+:::
+
+## Theming `ggplot2` {.smaller}
+
+:::: columns
+::: {.column width="80%" style="font-size:smaller;"}
+axis
+
+:   `title`, `text`, `ticks`, `line`
+
+legend
+
+:   `background`, `margin`, `spacing`, `key`, `title`,
+
+:   `position`, `direction` `justification`, `box`
+
+panel
+
+:   `spacing`, `grid`, `background`
+
+plot
+
+:   `title`, `subtitle`, `caption`, `tag`, `margin`
+
+strip
+
+:   `background`, `text`
+
+:::
+
+::: {.column width="20%"}
+
+```{r}
+#| echo: true
+#| fig-width: 6
+#| fig-asp: 1.5
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+mtcars$gear <- as.factor(mtcars$gear)
+plt <- ggplot(mtcars, aes(hp, mpg, color = gear)) +
+  geom_point(aes(size = wt), alpha = 0.8) +
+  scale_size_continuous(breaks = seq(1, 6, 2), limits = c(1, 6)) +
+  facet_grid(rows = vars(am)) +
+  theme(
+    legend.position = c(1, 1),
+    legend.justification = c(1.5, 1.5),
+    legend.direction = "horizontal"
+  ) +
+  labs(
+    title = "Power vs Consumption",
+    x = "Horse power", 
+    y = "Mile per gallon",
+    color = "Gear",
+    size = "Weight"
+  )
+plt
+```
+
+::: {.fragment .fade-in #theme-helper .absolute}
+__Helpers:__
+
+-   `element_text`
+-   `element_line`
+-   `element_rect`
+-   `element_blank`
+-   `margin`
+-   `unit`
+:::
+:::
+::::
+
+##  {#theme-background background-image="Images/theme-reference.png" background-size="contain"}
+[Sourcehttps://github.com/isabellabenabaye/ggplot2-reference/blob/master/ggplot2-theme-elements-reference.pdf](https://github.com/isabellabenabaye/ggplot2-reference/blob/master/ggplot2-theme-elements-reference.pdf)
+
+## Annotations
+:::: columns
+::: column
+
+- Use `geom` to add custom elements
+- `geom` can be `point`, `line`, `segment`, `rect` and more
+- Add custom _grob_ using `annotation_custom`
+
+:::
+::: {.column .smaller width="50%"}
+```{r}
+#| echo: false
+mtcars$gear <- as.factor(mtcars$gear)
+plt <- ggplot(mtcars, aes(hp, mpg, fill = gear)) +
+  geom_point(
+    aes(size = wt), 
+    alpha = 0.8, 
+    shape = 21,
+    stroke = 0.25
+  ) +
+  scale_size_continuous(
+    breaks = seq(1, 6, 2), 
+    limits = c(1, 6),
+    range = c(0.1, 10),
+    trans = "exp"
+  ) +
+  theme(
+    legend.position = "bottom"
+  ) +
+  labs(
+    x = "Horse power", 
+    y = "Mile per gallon",
+    fill = "Gear",
+    size = "Weight"
+  )
+```
+
+```{r}
+#| echo: true
+#| fig-width: 5
+#| fig-asp: 1
+#| out-width: "100%"
+#| fig-dpi: 150
+#| code-fold: true
+#| code-summary: "Code"
+#| code-overflow: scroll
+plt +
+  annotate(
+    geom = "rect",
+    xmin = 150, xmax = 250,
+    ymin = 10, ymax = 20,
+    fill = "ghostwhite",
+    alpha = 0.25,
+    color = "grey"
+  ) +
+  annotate(
+    geom = "text",
+    x = 200,
+    y = 20,
+    label = "heavy vehicle and\nlow fuel efficint",
+    vjust = -0.5,
+    family = "mono"
+  )
+```
+
+:::
+::::
+
+## Extensions {.smaller}
+:::: columns
+::: column
+
+[`patchwork`](https://github.com/thomasp85/patchwork#patchwork), [`cowplot`](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html)
+: Composing multiple ggplot plots
+
+[`gganimate`](https://gganimate.com/)
+: Grammar of animated graphics with `ggpolot2`
+
+[`ggstatsplot`](https://github.com/IndrajeetPatil/ggstatsplot) and [`ggpubr`](https://rpkgs.datanovia.com/ggpubr/)
+: Enhance `ggplot2` with statistics and annotations
+:::
+
+::: column
+[`ggthemes`](https://github.com/jrnold/ggthemes), [`ggtech`](https://github.com/ricardo-bion/ggtech), [`see`](https://github.com/easystats/see), [`ggsci`](https://nanx.me/ggsci/)
+: Extra themes and schemes for `ggplot2`
+
+[`ggraph`](https://github.com/thomasp85/ggraph)
+: Visualize network, graphs and trees
+
+[`ggrepel`](https://github.com/slowkow/ggrepel), [`geomtextpath`](https://allancameron.github.io/geomtextpath/)
+: Manage and direct text in your plot
+
+:::
+::::
+
+More: [`survminer`](http://www.sthda.com/english/rpkgs/survminer/), [`ggridge`](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html), [`ggh4x`](https://teunbrand.github.io/ggh4x/)
+ 
+
+::: aside
+See more at: [https://exts.ggplot2.tidyverse.org/gallery/](https://exts.ggplot2.tidyverse.org/gallery/)
+:::
+
+# Demo
+
+## Resources {.center}
+
+**Books and Resources**
+
+-   [https://posit.co/resources/cheatsheets](https://posit.co/resources/cheatsheets)
+-   [https://ggplot2.tidyverse.org/](https://ggplot2.tidyverse.org/)
+-   [https://ggplot2-book.org/](https://ggplot2-book.org/)
+-   [https://github.com/erikgahner/awesome-ggplot2](https://github.com/erikgahner/awesome-ggplot2)
+
+**Dataset collection**
+
+[https://vincentarelbundock.github.io/Rdatasets/datasets.html](https://vincentarelbundock.github.io/Rdatasets/datasets.html)
+
+##  {background-image="Images/Thank-You.png" background-size="auto 90%" background-color="#faf2ed88"}
+

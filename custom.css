@@ -1,0 +1,145 @@
+div.columns {
+  display: flex;
+}
+.reveal section:not(.smaller) .smaller {
+    font-size: 85%;
+}
+.fragment.current-visible:not(.current-fragment) {
+  display: none;
+}
+
+.reveal>.overlay.overlay-preview.loaded {
+  backdrop-filter: blur(3px);
+}
+
+.reveal>.overlay .viewport {
+    position: relative;
+    display: flex;
+    top: unset;
+    right: unset;
+    bottom: unset;
+    left: unset;
+    height: 80%;
+    width: 75%;
+    margin: 0 auto;
+    margin-top: 5%;
+}
+.reveal div.sourceCode {
+  border: none;
+  border-radius: 0;
+  border-left: 5px solid #ccaaff;
+  padding-left: 5px;
+}
+.reveal .panel-tabset {
+  font-size: 85%;
+  height: 500px;
+  max-height: 500px;
+}
+.cell details {
+  margin-bottom: 0.1em;
+}
+.cell details summary {
+  font-size: 85%;
+}
+.cell details div.sourceCode {
+  width: 600px;
+  font-size: 90%;
+  border: 1px solid black;
+  padding-bottom: 5px;
+}
+.absolute#theme-helper {
+  top: 287px;
+  right: 44px;
+  background: ghostwhite;
+  padding: 10px;
+  width: 250px;
+  overflow: scroll;
+  font-size: 0.7em;
+}
+#theme-background p {
+  font-size: small;
+  font-family: consolas, monospace;
+  position: absolute;
+  top: -26px;
+  left: -90px;
+  width: 500px;
+  height: 50px;
+  transform-origin: top left;
+  transform: rotate(90deg);
+  border-top: 1px solid lightgrey;
+  padding-top: 4px;
+}
+
+/* Slide specific rules */
+/*
+#base-r-system:before, #lattice-system:before, #ggplot2-system:before {
+  content: "";
+  position: absolute;
+  height: var(--slide-height);
+  width: 40%;
+  right: 0;
+  top: 0;
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: screen;
+  backdrop-filter: opacity(0.5);
+}
+#base-r-system:before {
+  background-image: linear-gradient(90deg, white, black), 
+    url(Images/plot-matrix-wallpaper.jpg);
+}
+#lattice-system:before {
+  background-image: linear-gradient(90deg, white, black), 
+    url(Images/lattice-background.jpg);
+}
+#ggplot2-system:before {
+  background-image: linear-gradient(90deg, white, black), 
+    url(Images/layered-landscape.jpg);
+}
+*/
+#ggplot2-components div.column {
+  align-self: end;
+}
+#component-mask {
+  top: 20%;
+  right: 32%;
+  background: #ffffffcc;
+  width: 200px;
+}
+#ggplot2-components pre code {
+  font-size: 95%;
+  overflow: hidden;
+}
+/*
+#plotting-system {
+  margin-left: 50px;
+  max-height: 500px;
+  overflow-y: hidden;
+  justify-content: end;
+}
+#plotting-system div {
+  display: grid;
+  justify-content: right;
+  height: 500px;
+  width: 500px;
+  text-align: right;
+  font-family: sans-serif;
+}
+#plotting-system div figure {
+  display: grid;
+  justify-content: end;
+  justify-items: end;
+}
+
+#plotting-system div figure img {
+  max-height: 350px;
+}
+
+#plotting-system div figure a code {
+  font-size: 75%;
+}
+
+*/
+
+
